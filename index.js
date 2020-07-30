@@ -39,12 +39,13 @@ const arr_5 = [
     ['*', '*', '*', '*', '*']
 ]
 const arr_6 = [
-    ['', '*', '*', '*', '*'],
-    ['', '', '', '', ''],
-    ['', '*', '', '', '*'],
-    ['*', '*', '*', '*', '*'],
-    ['*', '', '', '', '*'],
-    ['*', '*', '*', '*', '']
+    ['', '*', '', '*', ''],
+    ['*', '', '*', '', '*'],
+    ['', '*', '*', '', '*'],
+    ['*', '*', '*', '', '*'],
+    ['', '*', '*', '', '*'],
+    ['*', '*', '*', '', '*'],
+    ['', '', '', '', '*']
 ]
 const testTop = ({ i, j }, flags) => {
     const top = i > 0 ? flags[i - 1][j] : {
@@ -64,18 +65,31 @@ const testNeighbor = ({ i, j }, flags) => {
     let top = testTop({ i, j }, flags)
     let left = testLeft({ i, j }, flags)
 
-    const minIndex = min(top.spaceIndex, left.spaceIndex);
+    const {
+        min: minIndex,
+        max: maxIndex
+    } = compare(top.spaceIndex, left.spaceIndex);
     return {
         minIndex,
+        maxIndex,
         has: top.space || left.space
     }
 }
-const min = (a, b) => {
+const compare = (a, b) => {
+    let min, max
     if (a && b) {
-        return a > b ? b : a
+        min = a > b ? b : a
+        max = a < b ? b : a
+    } else {
+        min = a || b
+        max = a || b
     }
-    return a || b
+    return {
+        min,
+        max
+    }
 }
+
 const countSpace = (arr) => {
     const m = arr.length
     const n = arr[0].length
@@ -90,15 +104,19 @@ const countSpace = (arr) => {
             }
             if (arr[i][j] !== '*') {
                 flags[i][j].space = true;
-                const neighbor = testNeighbor({ i, j }, flags)
-                if (neighbor.has) {
-                    flags[i][j].spaceIndex = neighbor.minIndex
-                    total=flags[i][j].spaceIndex
+                const {
+                    has,
+                    minIndex,
+                    maxIndex
+                } = testNeighbor({ i, j }, flags)
+                if (has) {
+                    flags[i][j].spaceIndex = minIndex
+                    total = (minIndex !== maxIndex) ? maxIndex - 1 : total
                 } else {
                     total++
                     flags[i][j].spaceIndex = total
                 }
-                // console.log(i, j, total)
+                // console.log(i, j, total,flags[i][j].spaceIndex)
             }
         }
     }
@@ -110,4 +128,4 @@ countSpace(arr_2)//3
 countSpace(arr_3)//2
 countSpace(arr_4)//1
 countSpace(arr_5)//1
-countSpace(arr_6)//3
+countSpace(arr_6)//7
