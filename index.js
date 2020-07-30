@@ -39,13 +39,13 @@ const arr_5 = [
     ['*', '*', '*', '*', '*']
 ]
 const arr_6 = [
-    ['', '*', '', '*', ''],
-    ['*', '', '*', '', '*'],
-    ['', '*', '*', '', '*'],
-    ['*', '*', '*', '', '*'],
-    ['', '*', '*', '', '*'],
-    ['*', '*', '*', '', '*'],
-    ['', '', '', '', '*']
+    ['', '*', '', '*', '', '*', '*'],
+    ['*', '', '*', '', '*', '*', ''],
+    ['', '*', '', '*', '', '*', ''],
+    ['*', '*', '', '*', '', '*', ''],
+    ['', '*', '', '*', '', '*', ''],
+    ['*', '*', '', '*', '', '*', ''],
+    ['', '', '', '', '', '', '']
 ]
 const testTop = ({ i, j }, flags) => {
     const top = i > 0 ? flags[i - 1][j] : {
@@ -72,7 +72,8 @@ const testNeighbor = ({ i, j }, flags) => {
     return {
         minIndex,
         maxIndex,
-        has: top.space || left.space
+        has: top.space || left.space,
+        both: top.space && left.space,
     }
 }
 const compare = (a, b) => {
@@ -106,17 +107,23 @@ const countSpace = (arr) => {
                 flags[i][j].space = true;
                 const {
                     has,
+                    both,
                     minIndex,
                     maxIndex
                 } = testNeighbor({ i, j }, flags)
                 if (has) {
                     flags[i][j].spaceIndex = minIndex
-                    total = (minIndex !== maxIndex) ? maxIndex - 1 : total
+                    if (both && minIndex !== maxIndex && maxIndex <= total) {
+                        //用minIndex !== maxIndex判断邻居的index不一致
+                        total = total - 1
+                        // console.log(total, i, j, minIndex, maxIndex)
+                    }
+
                 } else {
                     total++
                     flags[i][j].spaceIndex = total
+                    // console.log(total, i, j, minIndex, maxIndex)
                 }
-                // console.log(i, j, total,flags[i][j].spaceIndex)
             }
         }
     }
@@ -128,7 +135,7 @@ countSpace(arr_2)//3
 countSpace(arr_3)//2
 countSpace(arr_4)//1
 countSpace(arr_5)//1
-countSpace(arr_6)//7
+countSpace(arr_6)//8
 
 /* 伪代码
 if (current.space) {
@@ -136,7 +143,10 @@ if (current.space) {
         current.spaceIndex = min(top.spaceIndex, left.spaceIndex)//因为合并了，所以当前space的Index取邻居最小
         //如果邻居俩的spaceIndex不一致，才需要重算total，如果一致total保持原样
         if (top.space && left.space && top.spaceIndex !== left.spaceIndex) {
-            total = max(top.spaceIndex, left.spaceIndex) - 1//因为合并，所以需要-1，用max减，原因是max可能与min差很多，而当前只抵消了一个
+            if(top.spaceIndex<=total || left.spaceIndex<=total){
+                如果最大index已经大于total则不能再减
+                total = total --//因为合并，所以需要-1
+            }
         }
     } else {//没有邻居所以total++，且current.spaceIndex=新的total
         total++
