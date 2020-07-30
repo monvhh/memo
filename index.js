@@ -129,3 +129,17 @@ countSpace(arr_3)//2
 countSpace(arr_4)//1
 countSpace(arr_5)//1
 countSpace(arr_6)//7
+
+/* 伪代码
+if (current.space) {
+    if (top.space || left.space) {//有邻近space
+        current.spaceIndex = min(top.spaceIndex, left.spaceIndex)//因为合并了，所以当前space的Index取邻居最小
+        //如果邻居俩的spaceIndex不一致，才需要重算total，如果一致total保持原样
+        if (top.space && left.space && top.spaceIndex !== left.spaceIndex) {
+            total = max(top.spaceIndex, left.spaceIndex) - 1//因为合并，所以需要-1，用max减，原因是max可能与min差很多，而当前只抵消了一个
+        }
+    } else {//没有邻居所以total++，且current.spaceIndex=新的total
+        total++
+        current.spaceIndex = total
+    }
+}*/
