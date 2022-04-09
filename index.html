@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>React App</title>
+    <style>
+        .btn {
+            width: 100px;
+            height: 48px;
+            font-size: 36px;
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+        <div id="btn" class="btn">click me!</div>
+    </div>
+    <script>
+        // 防抖
+        const debounce = (func, wait, imediate) => {
+            let timeout, result;
+            let debounced = (...args) => {
+                if (timeout) { //每次执行重新计算timeout
+                    clearTimeout(timeout);
+                    //clearTimeout仅clear function执行，timeout仍然有值（setTimeout返回定时器编号）
+                }
+                if (imediate) {
+                    //已经执行过不再执行
+                    let callNow = !timeout;
+                    timeout = setTimeout(() => {
+                        timeout = null;
+                        //将timeout变量作为是否已执行的标志
+                        //如果立即执行，则在执行后wait时间后，再将其置空，表示可以再被执行
+                    }, wait);
+                    if (callNow) {
+                        result = func(...args)
+                    }
+                } else {
+                    timeout = setTimeout(() => {
+                        func(...args)
+                    }, wait)
+                }
+                return result;
+            }
+
+            debounced.cancel = () => {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            return debounced
+        }
+
+        let count = 1;
+        var container = document.getElementById('btn');
+
+        function getUserAction(e) {
+            container.innerHTML = count++;
+        };
+
+        var setUseAction = debounce(getUserAction, 3000, true);
+
+        container.onmousemove = setUseAction;
+
+        container.addEventListener('click', function () {
+            setUseAction.cancel();
+        })
+    </script>
+</body>
+
+</html>
