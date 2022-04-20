@@ -32,6 +32,28 @@ TODO
 
 ## 客户端性能
 
+### 性能指标
+
+DNS lookup DNS解析时间
+TCP连接时间:responseStart - resquestStart
+FCP first content paint
+Page load time: onload-start
+资源（js/css)加载时间
+首字节TTFB responseStart-startTime
+
+API:
+
+1. Navigation API: performance.timing
+2. Resource API: performance.getEntryBy
+
+性能基线：95/99线
+
+### Error
+
+1. 资源加载错误 addEventListener('error',callback,true)
+2. js执行错误 window.onerror
+3. promise addEventListener('unhandlerejection',callback)
+
 ### 工具
 
 #### Chrome DevTools

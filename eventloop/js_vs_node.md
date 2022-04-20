@@ -1,4 +1,5 @@
 Node使用v8作为runtime，但eventloop使用libuv
+浏览器->浏览器引擎
 
 chrome->libevent
 
